@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import model.services.DepartmentService;
 
 public class MainViewController implements Initializable{
 	//atributos dos itens menu
@@ -33,7 +34,7 @@ public class MainViewController implements Initializable{
 	@FXML
 	public void onMenuItemDepartmentAction() {
 		//Chamando a view que desejo abrir
-		loadView("/gui/DepartmentList.fxml");
+		loadView2("/gui/DepartmentList.fxml");
 	}
 	@FXML
 	public void onMenuItemAboutAction() {
@@ -62,6 +63,31 @@ public class MainViewController implements Initializable{
 			mainVBox.getChildren().clear();
 			mainVBox.getChildren().add(mainmenu);//incluindo os menus do mainScene
 			mainVBox.getChildren().addAll(newVBox.getChildren());//incluindo os filhos da janela nova
+			
+		}
+		catch(IOException e) {
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+		}
+	}
+	
+	private synchronized void loadView2(String absoluteName) {//sinchronized não permite interrupçao nesse método
+		try {
+			//abrindo uma nova janela
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			VBox newVBox = loader.load();
+			//pegando o metodo getMainScene() da class Main
+			Scene mainScene = Main.getMainScene();
+			//pegando uma referencia do VBox que esta na janela principal MainView
+			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
+			//salvando o filho da janela principal
+			Node mainmenu = mainVBox.getChildren().get(0);
+			mainVBox.getChildren().clear();
+			mainVBox.getChildren().add(mainmenu);//incluindo os menus do mainScene
+			mainVBox.getChildren().addAll(newVBox.getChildren());//incluindo os filhos da janela nova
+			
+			DepartmentListController controller = loader.getController();//acessando loader
+			controller.setDepartmentService(new DepartmentService());//injetando dependencia no controller
+			controller.updateTableView();//atualizando os dados na tela do table view
 			
 		}
 		catch(IOException e) {
