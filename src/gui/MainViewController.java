@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
@@ -33,13 +34,16 @@ public class MainViewController implements Initializable{
 	}
 	@FXML
 	public void onMenuItemDepartmentAction() {
-		//Chamando a view que desejo abrir
-		loadView2("/gui/DepartmentList.fxml");
+		//Chamando a view que desejo abrir, com ação de inicialização do departmentListController como parametro lambda
+		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
+			controller.setDepartmentService(new DepartmentService());
+			controller.updateTableView();
+		} );
 	}
 	@FXML
 	public void onMenuItemAboutAction() {
 		//Chamando a view que desejo abrir 
-		loadView("/gui/About.fxml");
+		loadView("/gui/About.fxml", x -> {});
 	}
 	
 	//metodo da initialize
@@ -49,7 +53,7 @@ public class MainViewController implements Initializable{
 		
 	}
 	
-	private synchronized void loadView(String absoluteName) {//sinchronized não permite interrupçao nesse método
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {//sinchronized não permite interrupçao nesse método
 		try {
 			//abrindo uma nova janela
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
@@ -64,12 +68,16 @@ public class MainViewController implements Initializable{
 			mainVBox.getChildren().add(mainmenu);//incluindo os menus do mainScene
 			mainVBox.getChildren().addAll(newVBox.getChildren());//incluindo os filhos da janela nova
 			
+			//inicializando o consumer (função como argumento na chamada do metodo)
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+			
 		}
 		catch(IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
-	
+	/*
 	private synchronized void loadView2(String absoluteName) {//sinchronized não permite interrupçao nesse método
 		try {
 			//abrindo uma nova janela
@@ -93,6 +101,6 @@ public class MainViewController implements Initializable{
 		catch(IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
-	}
+	}*/
 
 }
