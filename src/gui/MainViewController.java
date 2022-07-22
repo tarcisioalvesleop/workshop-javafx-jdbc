@@ -35,9 +35,10 @@ public class MainViewController implements Initializable{
 	@FXML
 	public void onMenuItemDepartmentAction() {
 		//Chamando a view que desejo abrir, com ação de inicialização do departmentListController como parametro lambda
-		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
-			controller.setDepartmentService(new DepartmentService());
-			controller.updateTableView();
+		loadView("/gui/DepartmentList.fxml", (DepartmentListController 
+			controller) -> {
+			controller.setDepartmentService(new DepartmentService());//função foi parametrizada no metodo loadView
+			controller.updateTableView();//função foi parametrizada no metodo loadView
 		} );
 	}
 	@FXML
@@ -68,7 +69,7 @@ public class MainViewController implements Initializable{
 			mainVBox.getChildren().add(mainmenu);//incluindo os menus do mainScene
 			mainVBox.getChildren().addAll(newVBox.getChildren());//incluindo os filhos da janela nova
 			
-			//inicializando o consumer (função como argumento na chamada do metodo)
+			//inicializando o consumer (função parametrizada como argumento na chamada do metodo)
 			T controller = loader.getController();
 			initializingAction.accept(controller);
 			
