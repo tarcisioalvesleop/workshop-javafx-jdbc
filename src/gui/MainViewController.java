@@ -17,6 +17,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import model.services.DepartmentService;
+import model.services.SellerService;
 
 public class MainViewController implements Initializable{
 	//atributos dos itens menu
@@ -30,7 +31,12 @@ public class MainViewController implements Initializable{
 	//métodos tratando os eventos do menu 
 	@FXML
 	public void onMenuItemSellerAction() {
-		System.out.println("onMenuItemSellerAction");
+		//Chamando a view que desejo abrir, com ação de inicialização do departmentListController como parametro lambda
+		loadView("/gui/SellerList.fxml", (SellerListController 
+			controller) -> {
+			controller.setSellerService(new SellerService());//função foi parametrizada no metodo loadView
+			controller.updateTableView();//função foi parametrizada no metodo loadView
+		} );
 	}
 	@FXML
 	public void onMenuItemDepartmentAction() {
